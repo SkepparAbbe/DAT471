@@ -58,10 +58,10 @@ done
 
 # The file system of /data
 echo -n "File system of /data: "; df -T /data | awk 'NR==2 {print $2}'
-USED_STORAGE=$(df -T /data | awk 'NR==2 {print $4}')
-AVAILABLE_STORAGE=$(df -T /data | awk 'NR==2 {print $4}')
+TOTAL_STORAGE=$(df -h /data | awk 'NR==2 {print $2}')
+AVAILABLE_STORAGE=$(df -h /data | awk 'NR==2 {print $4}')
 echo "Free storage on /data: $AVAILABLE_STORAGE"
-echo "Total storage on /data: $((AVAILABLE_STORAGE + USED_STORAGE))"
+echo "Total storage on /data: $TOTAL_STORAGE"
 
 
 # Kernel / Linux Info
