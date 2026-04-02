@@ -6,8 +6,13 @@
 #SBATCH --job-name=problem2c
 
 # Output file
-#SBATCH --output=logs_problem2/problem2c%j.log
+#SBATCH --output=logs/problem2c_%j.log
 
-DATASET=$"data/courses/2026 dat471 dit066/datasets/gutenberg/$1"
+# Time limit to prioritize us more
+#SBATCH --time=30
 
-apptainer exec /data/courses/2026_dat471_dit066/containers/assignment1.sif $2 $DATASET
+DATASET=$"/mnt/$1/"
+
+echo $DATASET
+
+apptainer exec --bind /data/courses/2026_dat471_dit066/datasets/gutenberg/:/mnt/ /data/courses/2026_dat471_dit066/containers/assignment1.sif python3 $2 $DATASET

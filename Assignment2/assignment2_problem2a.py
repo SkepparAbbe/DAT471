@@ -64,7 +64,7 @@ def get_top10(counts):
     Return value:
     A list of (count,word) pairs (int,str)
     """
-    sorted(counts.items(), key=lambda item: item[1], reverse=True)[:10]
+    return (sorted(counts.items(), key=lambda item: item[1], reverse=True)[:10])
 
 
 def merge_counts(dict_to, dict_from):
@@ -98,8 +98,12 @@ def compute_checksum(counts):
     Return value:
     The checksum (int)
     """
-    raise NotImplementedError
+    
+    sum = 0
+    for word, cnt in counts.items():
+        sum += len(word) * cnt
 
+    return sum
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Counts words of all the text files in the given directory')
