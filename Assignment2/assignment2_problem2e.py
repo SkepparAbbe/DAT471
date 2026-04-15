@@ -33,7 +33,7 @@ def get_file(path):
     with open(path,'r') as f:
         return f.read()
 
-def count_words_in_file(file):
+def count_words_in_file(filepath):
     """
     Counts the number of occurrences of words in the file
     Whitespace is ignored
@@ -44,14 +44,12 @@ def count_words_in_file(file):
     Returns: Dictionary that maps words (strings) to counts (ints)
     """
     counts = dict()
-    for word in file.split():
+    for word in get_file(filepath).split():
         if word in counts:
             counts[word] += 1
         else:
             counts[word] = 1
     return counts
-
-
 
 def get_top10(counts):
     """
@@ -103,7 +101,7 @@ def compute_checksum(counts):
     for word, cnt in counts.items():
         sum += len(word) * cnt
 
-    return sum
+    return sum    
 
 if __name__ == '__main__':
     t1 = time.time()
@@ -128,14 +126,17 @@ if __name__ == '__main__':
     if batch_size < 1:
         sys.stderr.write(f'{sys.argv[0]}: ERROR: Batch size must be positive (got {batch_size})!\n')
         quit(1)
+        
     t2 = time.time()
 
-    files = [get_file(fn) for fn in get_filenames(path)]
+    filepaths = get_filenames(path)
     t3 = time.time()
 
     file_counts = list()
-    for file in files:
-        file_counts.append(count_words_in_file(file))
+    
+    with mp.Pool(num_workers) as p:
+        file_counts = p.map(count_words_in_file, filepaths)
+
     t4 = time.time()
 
     global_counts = dict()
@@ -152,7 +153,7 @@ if __name__ == '__main__':
     t_block3 = t4 - t3
     t_block4 = t5 - t4
 
-    print(f"Total time: {t_tot:.4f}")
+    print(f"Cores: {num_workers}; Total time: {t_tot:.4f}")
     print(f"Block 1 time: {t_block1:.4f}")
     print(f"Block 2 time: {t_block2:.4f}")
     print(f"Block 3 time: {t_block3:.4f}")
@@ -161,4 +162,3 @@ if __name__ == '__main__':
     print(f"Parallel time: {t_p:.4f}")
     print(f"Parallel fraction: {(t_p / t_tot):.4f}")
     print(f"Checksum: {compute_checksum(global_counts)}\n")
-    

@@ -136,9 +136,6 @@ if __name__ == '__main__':
 
     file_counts = list()
     
-    #for file in files:
-    #    file_counts.append(count_words_in_file(file))
-
     with mp.Pool(num_workers) as p:
         file_counts = p.map(count_words_in_file, files)
 
@@ -153,7 +150,7 @@ if __name__ == '__main__':
     t_s = (t2 - t1) + (t5 - t4)
     t_p = t_tot - t_s
 
-    t_block1 = t_s
+    t_block1 = t2 - t1
     t_block2 = t3 - t2
     t_block3 = t4 - t3
     t_block4 = t5 - t4
