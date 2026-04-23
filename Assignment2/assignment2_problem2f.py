@@ -123,7 +123,6 @@ def compute_checksum(counts):
 
     return sum    
 
-
 if __name__ == '__main__':
     t1 = time.time()
     parser = argparse.ArgumentParser(description='Counts words of all the text files in the given directory')
@@ -147,12 +146,6 @@ if __name__ == '__main__':
     if batch_size < 1:
         sys.stderr.write(f'{sys.argv[0]}: ERROR: Batch size must be positive (got {batch_size})!\n')
         quit(1)
-
-    # construct workers and queues
-    # construct a special merger process
-    # put filenames into the input queue
-    # workers then put dictionaries for the merger
-    # the merger shall return the checksum and top 10 through the out queue
 
     # make queues
     wordcount_queue = mp.Queue()
@@ -204,4 +197,4 @@ if __name__ == '__main__':
     print(f"Checksum: {checksum}")
     print(f"Top 10 words with counts: {top_10}\n")
 
-    # print(f"{num_workers},{batch_size},{t_tot:.4f},{t_s:.4f},{t_p:.4f},{(t_p/t_tot):.4f},{checksum}")
+    # print(f"{num_workers},{batch_size},{t_tot:.4f},{t_s:.4f},{t_p:.4f},{(t_p/t_tot):.4f},{checksum}") # Used for csv data gather

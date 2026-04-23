@@ -83,8 +83,6 @@ def merge_counts(dict_to, dict_from):
         else:
             dict_to[k] += v
 
-
-
 def compute_checksum(counts):
     """
     Computes the checksum for the counts as follows:

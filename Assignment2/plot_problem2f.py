@@ -48,21 +48,19 @@ def main():
     df['speedup'] = df['base_time'] / df['total_time']
     df['efficiency'] = df['speedup'] / df['workers']
 
-    fig, axes = plt.subplots(3, 1, figsize=(18, 6))
-    fig.suptitle('Wordcount Benchmark — Worker × Batch Size Tuning',
-                 fontsize=14, fontweight='bold', y=1.02)
+    fig, axes = plt.subplots(3, 1, figsize=(10, 18))
 
     cold_hot = LinearSegmentedColormap.from_list('cold_hot', ['#1a1a2e', '#e94560', '#f5a623'])
     green_map = LinearSegmentedColormap.from_list('greens', ['#1a1a2e', '#00b894', '#dfe6e9'])
     blue_map  = LinearSegmentedColormap.from_list('blues',  ['#1a1a2e', '#0984e3', '#dfe6e9'])
 
-    make_heatmap(df, 'total_time', 'Total Time (s) — lower is better',
+    make_heatmap(df, 'total_time', 'Total Time (s) - lower is better',
                  cold_hot, axes[0], fmt=".2f")
 
-    make_heatmap(df, 'speedup', 'Speedup — higher is better',
+    make_heatmap(df, 'speedup', 'Speedup - higher is better',
                  green_map, axes[1], fmt=".1f")
 
-    make_heatmap(df, 'efficiency', 'Efficiency (speedup/workers) — closer to 1 is better',
+    make_heatmap(df, 'efficiency', 'Efficiency (speedup/workers) - closer to 1 is better',
                  blue_map, axes[2], fmt=".2f")
 
     # Mark best cell in each heatmap

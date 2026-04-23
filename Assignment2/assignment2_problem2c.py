@@ -51,8 +51,6 @@ def count_words_in_file(file):
             counts[word] = 1
     return counts
 
-
-
 def get_top10(counts):
     """
     Determines the 10 words with the most occurrences.
@@ -65,7 +63,6 @@ def get_top10(counts):
     A list of (count,word) pairs (int,str)
     """
     return (sorted(counts.items(), key=lambda item: item[1], reverse=True)[:10])
-
 
 def merge_counts(dict_to, dict_from):
     """
@@ -84,8 +81,6 @@ def merge_counts(dict_to, dict_from):
             dict_to[k] = v
         else:
             dict_to[k] += v
-
-
 
 def compute_checksum(counts):
     """
