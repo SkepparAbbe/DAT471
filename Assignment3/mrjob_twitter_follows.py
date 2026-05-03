@@ -3,15 +3,6 @@
 from mrjob.job import MRJob
 
 class MRJobTwitterFollows(MRJob):
-    # The final (key,value) pairs returned by the class should be
-    # 
-    # yield ('most followed id', ???)
-    # yield ('most followed', ???)
-    # yield ('average followed', ???)
-    # yield ('count follows no-one', ???)
-    #
-    # You will, of course, need to replace ??? with a suitable expression
-
     def mapper(self, _, line):
         id_pair = line.split(':')
         follow_ids = [x for x in id_pair[1].strip("\n").split(' ') if x.strip()]
@@ -21,13 +12,22 @@ class MRJobTwitterFollows(MRJob):
 
     def combiner(self, _, pairs):
         # Consume because we need the length and reusable list
-        pairs = list(pairs)
-        best = max(pairs, key=lambda x: x[1])
+        max_id, max_follows, length, follows_sum, no_following = "", 0, 0, 0, 0
 
-        yield (None, [best[0], best[1], sum(x[1] for x in pairs), len(pairs), sum((1 if p[1] == 0 else 0 for p in pairs))])
+        # For loop to not allocate the generator output of mappers.
+        for id_x, val_x in pairs:
+            if val_x == 0:
+                no_following += 1
+            if val_x > max_follows:
+                max_follows = val_x
+                max_id = id_x
+            length += 1
+            follows_sum += val_x
+
+        yield (None, [max_id, max_follows, follows_sum, length, no_following])
         
     def reducer(self, _, local_reducer_values):
-        # Consume because we need the length and reusable list
+        # Consume because list size is small enough
         local_reducer_values = list(local_reducer_values)
         best = max(local_reducer_values, key=lambda x: x[1])
 

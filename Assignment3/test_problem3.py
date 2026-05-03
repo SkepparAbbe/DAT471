@@ -7,7 +7,7 @@ with open(filepath, 'r') as f:
         follow_ids = [x for x in id_pair[1].strip("\n").split(' ') if x.strip()]
         count = len(follow_ids)
 
-        if (count > 0):
+        if (count > 2):
             print(line)
             print(follow_ids)
             print(f"({id_pair[0]}, {count})")

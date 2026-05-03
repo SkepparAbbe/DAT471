@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from mrjob_twitter_follows import MRJobTwitterFollows
+from mrjob_twitter_followers_new import MRJobTwitterFollowers
 import time
 import argparse
 import csv
@@ -17,7 +17,7 @@ if __name__ == '__main__':
                         help='Path to CSV file to append results to (default: results.csv)')
     args = parser.parse_args()
 
-    mr_job = MRJobTwitterFollows(args=[
+    mr_job = MRJobTwitterFollowers(args=[
         '-r', 'local',
         '--num-cores', str(args.num_workers),
         args.filename
