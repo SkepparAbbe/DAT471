@@ -36,7 +36,16 @@ def jdn(dt):
 # key is the group key, df is a Pandas dataframe
 # should return a Pandas dataframe
 def lsq(key,df):
-    raise NotImplementedError
+    x_bar = df["d"].mean()
+    y_bar = df["t_avg"].mean()
+
+    beta_hat = ((df["d"] - x_bar) * (df["t_avg"] - y_bar)).sum() / ((df["d"] - x_bar)**2).sum()
+    alpha_hat = y_bar - beta_hat * x_bar
+
+    return pd.DataFrame({
+        "alpha_hat": [alpha_hat],
+        "beta_hat": [beta_hat]
+    })
 
 
 if __name__ == '__main__':
@@ -50,14 +59,21 @@ if __name__ == '__main__':
 
     # this bit is important: by default, Spark only allocates 1 GiB of memory 
     # which will likely cause an out of memory exception with the full data
+
     spark = SparkSession.builder \
             .master(f'local[{args.num_workers}]') \
             .config("spark.driver.memory", "16g") \
             .getOrCreate()
     
     # read the CSV file into a pyspark.sql dataframe and compute the things you need
+    df = spark.read.csv(args.filename, header=True, inferSchema=True)
 
-    raise NotImplementedError
+    print(df.head())
+
+    # Apply jdn on the DATE column
+    df2 = df.withColumn('DATE', jdn(df['DATE']))
+    print(df2.head())
+    
 
     # top 5 slopes are printed here
     # replace None with your dataframe, list, or an appropriate expression
