@@ -9,10 +9,10 @@
 #SBATCH --output=logs/problem2a_%j.log
 
 # Time limit to prioritize us more
-#SBATCH --time=10
+#SBATCH --time=4
 
 # Limit number cores
-#SBATCH -c 32
+#SBATCH -c 16
 
 DATASET=$"/mnt/climate_small.csv"
 
