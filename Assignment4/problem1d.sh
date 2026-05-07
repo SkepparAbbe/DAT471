@@ -3,10 +3,10 @@
 ## SLURM commands 
 
 # Job Info
-#SBATCH --job-name=problem1b
+#SBATCH --job-name=problem1d
 
 # Output file
-#SBATCH --output=logs/problem1b_%j.log
+#SBATCH --output=logs/problem1d_%j.log
 
 # Time limit
 #SBATCH --time=30
@@ -15,7 +15,7 @@
 #SBATCH -c 64
 
 DATASET="/mnt/twitter-2010_10M.txt"
-CSV_OUT="results_problem1b_$(date +%Y%m%d_%H%M%S).csv"
+CSV_OUT="problem1d_$(date +%Y%m%d_%H%M%S).csv"
 
 # Core counts to sweep — adjust as needed
 CORE_COUNTS=(1 2 4 8 16 32 64)

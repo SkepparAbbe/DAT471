@@ -3,10 +3,10 @@
 ## SLURM commands 
 
 # Job Info
-#SBATCH --job-name=problem1
+#SBATCH --job-name=problem1c
 
 # Output file
-#SBATCH --output=logs/problem1_%j.log
+#SBATCH --output=logs/problem1c_%j.log
 
 # Time limit to prioritize us more
 #SBATCH --time=30

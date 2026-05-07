@@ -6,7 +6,7 @@ import findspark
 import csv
 findspark.init()
 import os
-from pyspark import SparkContext
+from pyspark import SparkContext, SparkConf
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = \
@@ -19,26 +19,34 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     start = time.time()
-    sc = SparkContext(master = f'local[{args.num_workers}]')
+
+    conf = SparkConf()
+    conf.set("spark.ui.showConsoleProgress", "false")
+
+    sc = SparkContext(master = f'local[{args.num_workers}]', conf=conf)
+    sc.setLogLevel("ERROR")
 
     lines = sc.textFile(args.filename)
 
     def parse_line(line):
         id_pair = line.split(':')
         follow_ids = [x for x in id_pair[1].strip("\n").split(' ') if x.strip()]
-        count = len(follow_ids)
-        return (id_pair[0], count)
-
+        
+        yields = [(id, 1) for id in follow_ids]
+        yields.append(("num_user", 1))
+        return yields
+    
     def seqOp(acc, pair):
         best_pair = (acc[0], acc[1])
 
-        if pair[1] > acc[1]:
+        if (pair[0] != "num_user") and (pair[1] > acc[1]):
             best_pair = pair
 
-        num_no_followers = acc[4] + (1 if pair[1] == 0 else 0)
-        
-        return (best_pair[0], best_pair[1], acc[2] + pair[1], acc[3] + 1, num_no_followers)
-        
+        if pair[0] == "num_user":
+            return (best_pair[0], best_pair[1], acc[2], pair[1], acc[4])
+        else:
+            return (best_pair[0], best_pair[1], acc[2] + pair[1], acc[3], acc[4] + 1)
+                
     def combOp(acc1, acc2):
         best_pair = (acc1[0], acc1[1])
 
@@ -46,27 +54,26 @@ if __name__ == '__main__':
             best_pair = (acc2[0], acc2[1])
 
         return (best_pair[0], best_pair[1], acc1[2] + acc2[2], acc1[3] + acc2[3], acc1[4] + acc2[4])
-        
 
-    # Most followed ID
-    # Most followed count
-    # Average of count
-    # Count follows no-on
-    statistics = lines.map(parse_line) \
+    statistics = lines.flatMap(parse_line) \
+        .reduceByKey(lambda x,y: x+y) \
         .aggregate(("", 0, 0, 0, 0),
             seqOp,
             combOp
         )
-
-    best_id, best_follows, total, count, num_no_follows = statistics    
-    end = time.time()
+        
+    best_id, best_followers, total, count, num_users_with_followers = statistics
     avg = total/count
+    no_followers = count - num_users_with_followers
+
+    end = time.time()
+    
     total_time = end - start
 
     # the first ??? should be the twitter id
-    print(f'max follows: {best_id} follows {best_follows}')
-    print(f'users follow on average: {avg}')
-    print(f'number of user who follow no-one: {num_no_follows}')
+    print(f'max followers: {best_id} has {best_followers} followers')
+    print(f'followers on average: {avg}')
+    print(f'number of user with no followers: {no_followers}')
     print(f'num workers: {args.num_workers}')
     print(f'total time: {total_time}')
 
