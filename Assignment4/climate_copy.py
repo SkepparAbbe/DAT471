@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
     # Five-number summary of slopes, replace with appropriate expressions
     print('Five-number summary of BETA values:')
-    beta_min, beta_q1, beta_median, beta_q3, beta_max = lsq_fit.approxQuantile("BETA_HAT", [0.0, 0.25, 0.5, 0.75, 1.0], 0.01)
+    beta_min, beta_q1, beta_median, beta_q3, beta_max = lsq_fit.approxQuantile("BETA_HAT", [0.0, 0.25, 0.5, 0.75, 1.0], 0)
     print(f'beta_min {beta_min:0.3e}')
     print(f'beta_q1 {beta_q1:0.3e}')
     print(f'beta_median {beta_median:0.3e}')
@@ -167,7 +167,7 @@ if __name__ == '__main__':
 
     # Five-number summary of temperature differences, replace with appropriate expressions
     print('Five-number summary of decade average difference values:')
-    tdiff_min, tdiff_q1, tdiff_median, tdiff_q3, tdiff_max = decade_differences.approxQuantile("DIFFERENCE", [0.0, 0.25, 0.5, 0.75, 1.0], 0.01)
+    tdiff_min, tdiff_q1, tdiff_median, tdiff_q3, tdiff_max = decade_differences.approxQuantile("DIFFERENCE", [0.0, 0.25, 0.5, 0.75, 1.0], 0)
     print(f'tdiff_min {tdiff_min:0.1f} °C')
     print(f'tdiff_q1 {tdiff_q1:0.1f} °C')
     print(f'tdiff_median {tdiff_median:0.1f} °C')

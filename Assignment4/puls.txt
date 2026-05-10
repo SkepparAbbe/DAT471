@@ -1,0 +1,316 @@
+--- Running with 1 core(s) ---
+WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/05/10 14:16:28 WARN Utils: Your hostname, neptune, resolves to a loopback address: 127.0.1.1; using 10.1.0.6 instead (on interface enp160s0f0np0)
+26/05/10 14:16:28 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/05/10 14:16:29 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Top 5 coefficients:
+USC00482175 at CRESTON, WY US BETA=2.817e-02 °F/d
+CA005062730 at SOUTH BAY, MB CA BETA=2.252e-02 °F/d
+USC00104910 at KILGORE, ID US BETA=1.244e-02 °F/d
+USC00506227 at STERLING, AK US BETA=8.704e-03 °F/d
+USC00398572 at VAN METRE, SD US BETA=6.979e-03 °F/d
+Fraction of positive coefficients:
+0.7453237410071942
+Five-number summary of BETA values:
+beta_min -2.649e-01
+beta_q1 6.796e-08
+beta_median 6.511e-05
+beta_q3 1.377e-04
+beta_max 2.817e-02
+Top 5 differences:
+RSM00024266 at VERHOJANSK, RS difference 36.1 °C)
+KZ000028676 at PETROPAVLOVSK, KZ difference 17.2 °C)
+RSM00029612 at BARABINSK, RS difference 15.5 °C)
+USC00301974 at DANSVILLE, NY US difference 12.5 °C)
+USC00179891 at WOODLAND, ME US difference 11.9 °C)
+Fraction of positive differences:
+0.17121771217712178
+Five-number summary of decade average difference values:
+tdiff_min -16.4 °C
+tdiff_q1 0.0 °C
+tdiff_median 0.8 °C
+tdiff_q3 1.6 °C
+tdiff_max 36.1 °C
+num workers: 1
+-------------------------------------------------------
+reading data time: 1.8 s
+computation only time: 357.1 s
+display data time: 0.0 s
+total time: 358.9 s
+INFO:    Terminating squashfuse_ll after timeout
+INFO:    Timeouts can be caused by a running background process
+--- Running with 2 core(s) ---
+WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/05/10 14:22:44 WARN Utils: Your hostname, neptune, resolves to a loopback address: 127.0.1.1; using 10.1.0.6 instead (on interface enp160s0f0np0)
+26/05/10 14:22:44 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/05/10 14:22:46 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Top 5 coefficients:
+USC00482175 at CRESTON, WY US BETA=2.817e-02 °F/d
+CA005062730 at SOUTH BAY, MB CA BETA=2.252e-02 °F/d
+USC00104910 at KILGORE, ID US BETA=1.244e-02 °F/d
+USC00506227 at STERLING, AK US BETA=8.704e-03 °F/d
+USC00398572 at VAN METRE, SD US BETA=6.979e-03 °F/d
+Fraction of positive coefficients:
+0.7453237410071942
+Five-number summary of BETA values:
+beta_min -2.649e-01
+beta_q1 6.796e-08
+beta_median 6.511e-05
+beta_q3 1.377e-04
+beta_max 2.817e-02
+Top 5 differences:
+RSM00024266 at VERHOJANSK, RS difference 36.1 °C)
+KZ000028676 at PETROPAVLOVSK, KZ difference 17.2 °C)
+RSM00029612 at BARABINSK, RS difference 15.5 °C)
+USC00301974 at DANSVILLE, NY US difference 12.5 °C)
+USC00179891 at WOODLAND, ME US difference 11.9 °C)
+Fraction of positive differences:
+0.17121771217712178
+Five-number summary of decade average difference values:
+tdiff_min -16.4 °C
+tdiff_q1 0.0 °C
+tdiff_median 0.8 °C
+tdiff_q3 1.6 °C
+tdiff_max 36.1 °C
+num workers: 2
+-------------------------------------------------------
+reading data time: 2.0 s
+computation only time: 203.4 s
+display data time: 0.0 s
+total time: 205.4 s
+INFO:    Terminating squashfuse_ll after timeout
+INFO:    Timeouts can be caused by a running background process
+--- Running with 4 core(s) ---
+WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/05/10 14:26:28 WARN Utils: Your hostname, neptune, resolves to a loopback address: 127.0.1.1; using 10.1.0.6 instead (on interface enp160s0f0np0)
+26/05/10 14:26:28 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/05/10 14:26:30 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Top 5 coefficients:
+USC00482175 at CRESTON, WY US BETA=2.817e-02 °F/d
+CA005062730 at SOUTH BAY, MB CA BETA=2.252e-02 °F/d
+USC00104910 at KILGORE, ID US BETA=1.244e-02 °F/d
+USC00506227 at STERLING, AK US BETA=8.704e-03 °F/d
+USC00398572 at VAN METRE, SD US BETA=6.979e-03 °F/d
+Fraction of positive coefficients:
+0.7453237410071942
+Five-number summary of BETA values:
+beta_min -2.649e-01
+beta_q1 6.796e-08
+beta_median 6.511e-05
+beta_q3 1.377e-04
+beta_max 2.817e-02
+Top 5 differences:
+RSM00024266 at VERHOJANSK, RS difference 36.1 °C)
+KZ000028676 at PETROPAVLOVSK, KZ difference 17.2 °C)
+RSM00029612 at BARABINSK, RS difference 15.5 °C)
+USC00301974 at DANSVILLE, NY US difference 12.5 °C)
+USC00179891 at WOODLAND, ME US difference 11.9 °C)
+Fraction of positive differences:
+0.17121771217712178
+Five-number summary of decade average difference values:
+tdiff_min -16.4 °C
+tdiff_q1 0.0 °C
+tdiff_median 0.8 °C
+tdiff_q3 1.6 °C
+tdiff_max 36.1 °C
+num workers: 4
+-------------------------------------------------------
+reading data time: 2.0 s
+computation only time: 104.3 s
+display data time: 0.0 s
+total time: 106.4 s
+INFO:    Terminating squashfuse_ll after timeout
+INFO:    Timeouts can be caused by a running background process
+--- Running with 8 core(s) ---
+WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/05/10 14:28:34 WARN Utils: Your hostname, neptune, resolves to a loopback address: 127.0.1.1; using 10.1.0.6 instead (on interface enp160s0f0np0)
+26/05/10 14:28:34 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/05/10 14:28:35 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Top 5 coefficients:
+USC00482175 at CRESTON, WY US BETA=2.817e-02 °F/d
+CA005062730 at SOUTH BAY, MB CA BETA=2.252e-02 °F/d
+USC00104910 at KILGORE, ID US BETA=1.244e-02 °F/d
+USC00506227 at STERLING, AK US BETA=8.704e-03 °F/d
+USC00398572 at VAN METRE, SD US BETA=6.979e-03 °F/d
+Fraction of positive coefficients:
+0.7453237410071942
+Five-number summary of BETA values:
+beta_min -2.649e-01
+beta_q1 6.796e-08
+beta_median 6.511e-05
+beta_q3 1.377e-04
+beta_max 2.817e-02
+Top 5 differences:
+RSM00024266 at VERHOJANSK, RS difference 36.1 °C)
+KZ000028676 at PETROPAVLOVSK, KZ difference 17.2 °C)
+RSM00029612 at BARABINSK, RS difference 15.5 °C)
+USC00301974 at DANSVILLE, NY US difference 12.5 °C)
+USC00179891 at WOODLAND, ME US difference 11.9 °C)
+Fraction of positive differences:
+0.17121771217712178
+Five-number summary of decade average difference values:
+tdiff_min -16.4 °C
+tdiff_q1 0.0 °C
+tdiff_median 0.8 °C
+tdiff_q3 1.6 °C
+tdiff_max 36.1 °C
+num workers: 8
+-------------------------------------------------------
+reading data time: 2.0 s
+computation only time: 75.8 s
+display data time: 0.0 s
+total time: 77.8 s
+INFO:    Terminating squashfuse_ll after timeout
+INFO:    Timeouts can be caused by a running background process
+--- Running with 16 core(s) ---
+WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/05/10 14:30:10 WARN Utils: Your hostname, neptune, resolves to a loopback address: 127.0.1.1; using 10.1.0.6 instead (on interface enp160s0f0np0)
+26/05/10 14:30:10 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/05/10 14:30:12 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Top 5 coefficients:
+USC00482175 at CRESTON, WY US BETA=2.817e-02 °F/d
+CA005062730 at SOUTH BAY, MB CA BETA=2.252e-02 °F/d
+USC00104910 at KILGORE, ID US BETA=1.244e-02 °F/d
+USC00506227 at STERLING, AK US BETA=8.704e-03 °F/d
+USC00398572 at VAN METRE, SD US BETA=6.979e-03 °F/d
+Fraction of positive coefficients:
+0.7453237410071942
+Five-number summary of BETA values:
+beta_min -2.649e-01
+beta_q1 6.796e-08
+beta_median 6.511e-05
+beta_q3 1.377e-04
+beta_max 2.817e-02
+Top 5 differences:
+RSM00024266 at VERHOJANSK, RS difference 36.1 °C)
+KZ000028676 at PETROPAVLOVSK, KZ difference 17.2 °C)
+RSM00029612 at BARABINSK, RS difference 15.5 °C)
+USC00301974 at DANSVILLE, NY US difference 12.5 °C)
+USC00179891 at WOODLAND, ME US difference 11.9 °C)
+Fraction of positive differences:
+0.17121771217712178
+Five-number summary of decade average difference values:
+tdiff_min -16.4 °C
+tdiff_q1 0.0 °C
+tdiff_median 0.8 °C
+tdiff_q3 1.6 °C
+tdiff_max 36.1 °C
+num workers: 16
+-------------------------------------------------------
+reading data time: 2.1 s
+computation only time: 54.0 s
+display data time: 0.0 s
+total time: 56.1 s
+INFO:    Terminating squashfuse_ll after timeout
+INFO:    Timeouts can be caused by a running background process
+--- Running with 32 core(s) ---
+WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/05/10 14:31:25 WARN Utils: Your hostname, neptune, resolves to a loopback address: 127.0.1.1; using 10.1.0.6 instead (on interface enp160s0f0np0)
+26/05/10 14:31:25 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/05/10 14:31:27 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Top 5 coefficients:
+USC00482175 at CRESTON, WY US BETA=2.817e-02 °F/d
+CA005062730 at SOUTH BAY, MB CA BETA=2.252e-02 °F/d
+USC00104910 at KILGORE, ID US BETA=1.244e-02 °F/d
+USC00506227 at STERLING, AK US BETA=8.704e-03 °F/d
+USC00398572 at VAN METRE, SD US BETA=6.979e-03 °F/d
+Fraction of positive coefficients:
+0.7453237410071942
+Five-number summary of BETA values:
+beta_min -2.649e-01
+beta_q1 6.796e-08
+beta_median 6.511e-05
+beta_q3 1.377e-04
+beta_max 2.817e-02
+Top 5 differences:
+RSM00024266 at VERHOJANSK, RS difference 36.1 °C)
+KZ000028676 at PETROPAVLOVSK, KZ difference 17.2 °C)
+RSM00029612 at BARABINSK, RS difference 15.5 °C)
+USC00301974 at DANSVILLE, NY US difference 12.5 °C)
+USC00179891 at WOODLAND, ME US difference 11.9 °C)
+Fraction of positive differences:
+0.17121771217712178
+Five-number summary of decade average difference values:
+tdiff_min -16.4 °C
+tdiff_q1 0.0 °C
+tdiff_median 0.8 °C
+tdiff_q3 1.6 °C
+tdiff_max 36.1 °C
+num workers: 32
+-------------------------------------------------------
+reading data time: 1.9 s
+computation only time: 46.1 s
+display data time: 0.0 s
+total time: 48.0 s
+INFO:    Terminating squashfuse_ll after timeout
+INFO:    Timeouts can be caused by a running background process
+--- Running with 64 core(s) ---
+WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/05/10 14:32:32 WARN Utils: Your hostname, neptune, resolves to a loopback address: 127.0.1.1; using 10.1.0.6 instead (on interface enp160s0f0np0)
+26/05/10 14:32:32 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/05/10 14:32:33 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Top 5 coefficients:
+USC00482175 at CRESTON, WY US BETA=2.817e-02 °F/d
+CA005062730 at SOUTH BAY, MB CA BETA=2.252e-02 °F/d
+USC00104910 at KILGORE, ID US BETA=1.244e-02 °F/d
+USC00506227 at STERLING, AK US BETA=8.704e-03 °F/d
+USC00398572 at VAN METRE, SD US BETA=6.979e-03 °F/d
+Fraction of positive coefficients:
+0.7453237410071942
+Five-number summary of BETA values:
+beta_min -2.649e-01
+beta_q1 6.796e-08
+beta_median 6.511e-05
+beta_q3 1.377e-04
+beta_max 2.817e-02
+Top 5 differences:
+RSM00024266 at VERHOJANSK, RS difference 36.1 °C)
+KZ000028676 at PETROPAVLOVSK, KZ difference 17.2 °C)
+RSM00029612 at BARABINSK, RS difference 15.5 °C)
+USC00301974 at DANSVILLE, NY US difference 12.5 °C)
+USC00179891 at WOODLAND, ME US difference 11.9 °C)
+Fraction of positive differences:
+0.17121771217712178
+Five-number summary of decade average difference values:
+tdiff_min -16.4 °C
+tdiff_q1 0.0 °C
+tdiff_median 0.8 °C
+tdiff_q3 1.6 °C
+tdiff_max 36.1 °C
+num workers: 64
+-------------------------------------------------------
+reading data time: 1.9 s
+computation only time: 41.9 s
+display data time: 0.0 s
+total time: 43.8 s
+INFO:    Terminating squashfuse_ll after timeout
+INFO:    Timeouts can be caused by a running background process
+Results written to results_problem2b_20260510_161620.csv
