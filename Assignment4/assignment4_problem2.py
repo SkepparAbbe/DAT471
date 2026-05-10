@@ -4,8 +4,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col, year, floor
 from pyspark.sql.types import IntegerType, DoubleType, StructType, StructField, DateType, StringType
 import pandas as pd
-import math
-import sys
+
 
 @udf(returnType=IntegerType())
 def jdn(dt):

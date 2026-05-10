@@ -70,7 +70,7 @@ if __name__ == '__main__':
     spark = SparkSession.builder \
             .master(f'local[{args.num_workers}]') \
             .config("spark.ui.showConsoleProgress", "false") \
-            .config("spark.driver.memory", "16g") \
+            .config("spark.driver.memory", "128g") \
             .getOrCreate()
 
     start = time.time()
@@ -99,11 +99,13 @@ if __name__ == '__main__':
         lsq,
         schema="STATION string, NAME string, ALPHA_HAT double, BETA_HAT double"
     )
-    lsq_fit.cache()
 
-    top_5_coefficients = lsq_fit.orderBy('BETA_HAT', ascending=False).limit(5).collect()
-    positive_slope_fraction = lsq_fit.filter(lsq_fit['BETA_HAT'] > 0).count() / lsq_fit.count()
-    beta_min, beta_q1, beta_median, beta_q3, beta_max = lsq_fit.approxQuantile("BETA_HAT", [0.0, 0.25, 0.5, 0.75, 1.0], 0.01)
+    valid = lsq_fit.filter(col("BETA_HAT").isNotNull() & ~col("BETA_HAT").isNaN())
+    valid.cache()
+    top_5_coefficients = valid.orderBy('BETA_HAT', ascending=False).limit(5).collect()
+    positive_slope_fraction = valid.filter(col('BETA_HAT') > 0).count() / valid.count()
+    # positive_slope_fraction = lsq_fit.filter(lsq_fit['BETA_HAT'] > 0).count() / lsq_fit.count()
+    beta_min, beta_q1, beta_median, beta_q3, beta_max = valid.approxQuantile("BETA_HAT", [0.0, 0.25, 0.5, 0.75, 1.0], 0)
 
     # Here you will need to implement computing the decadewise differences 
     # between the average temperatures of 1910s and 2010s
@@ -112,14 +114,6 @@ if __name__ == '__main__':
     # computed (no suitable stations in the tiny dataset!)
 
     # Note that values should be printed in celsius
-
-    # @udf(returnType=IntegerType())
-    # def decadize_year(dt):
-    #     return 10 * math.floor(dt.year / 10)
-
-    # @udf(returnType=DoubleType())
-    # def convertToCelsius(temp):
-    #     return (temp - 32)*(5/9)
     
     def calculate_differences(key, df):
         df_2010_avg = df[df["DATE"] == 2010]["T_AVERAGE"].mean()
@@ -139,14 +133,14 @@ if __name__ == '__main__':
             schema="STATION string, NAME string, DIFFERENCE double"
         )
     
-    decade_differences.cache()
+    valid = decade_differences.filter(col("DIFFERENCE").isNotNull() & ~col("DIFFERENCE").isNaN())
+    valid.cache()
+    num_valid = valid.count()
 
-    is_all_null = decade_differences.filter(col("DIFFERENCE").isNotNull()).count() == 0
-
-    if not is_all_null:
-        top_5_differences = decade_differences.orderBy('DIFFERENCE', ascending=False).limit(5).collect()
-        positive_difference_fraction = decade_differences.filter(decade_differences['DIFFERENCE'] > 0).count() / decade_differences.count()
-        tdiff_min, tdiff_q1, tdiff_median, tdiff_q3, tdiff_max = decade_differences.approxQuantile("DIFFERENCE", [0.0, 0.25, 0.5, 0.75, 1.0], 0.01)
+    if num_valid > 0:
+        top_5_differences = valid.orderBy('DIFFERENCE', ascending=False).limit(5).collect()
+        positive_difference_fraction = valid.filter(col('DIFFERENCE') > 0).count() / valid.count()
+        tdiff_min, tdiff_q1, tdiff_median, tdiff_q3, tdiff_max = valid.approxQuantile("DIFFERENCE", [0.0, 0.25, 0.5, 0.75, 1.0], 0)
 
     t3 = time.time()
 
@@ -171,7 +165,7 @@ if __name__ == '__main__':
 
 
     print('Top 5 differences:')
-    if not is_all_null:
+    if num_valid > 0:
         for row in top_5_differences:
             print(f'{row['STATION']} at {row['NAME']} difference {row['DIFFERENCE']:0.1f} °C)')
 
