@@ -7,6 +7,7 @@ from pyspark import SparkContext, SparkConf
 import math
 import string
 import time
+import numpy as np
 from assignment5_problem1_skeleton import murmur3_32
 from assignment5_problem2_skeleton import rho
 
@@ -64,10 +65,22 @@ def alpha(m):
     else:
         return (0.7213/(1+1.079/m))
         
-# Lazy 
-def parse_file(file, seed, log2m):
-    # return (compute_jr(w.strip(string.punctuation), seed, log2m) for w in file.split() if w.strip(string.punctuation))
-    return (compute_jr(w, seed, log2m) for w in file.split())
+def hyperloglog(words, m, seed, log2m):
+    num_pairs, harmonic_sum = words \
+        .map(lambda w: compute_jr(w, seed, log2m)) \
+        .reduceByKey(max) \
+        .map(lambda jr: (1, 2**(-jr[1]))) \
+        .reduce(lambda a, b: (a[0]+b[0], a[1]+b[1]))
+    
+    num_zeros = m - num_pairs
+    n_hat = alpha(m) * m**2 * (1 / (harmonic_sum + num_zeros))
+
+    if (n_hat <= ((5/2) * m)) and (num_zeros > 0):
+        n_hat = m * math.log(m/num_zeros)
+    elif (n_hat > ((1/30) * 2**32)):
+        n_hat = -2**32 * math.log(1-(n_hat / 2**32))
+
+    return n_hat
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -75,14 +88,12 @@ if __name__ == '__main__':
             'distinct words in all .txt files under the given path.'
     )
     parser.add_argument('path',help='path to walk',type=str)
-    parser.add_argument('-s','--seed',type=auto_int,default=0,help='seed value')
     parser.add_argument('-m','--num-registers',type=int,required=True,
                             help=('number of registers (must be a power of two)'))
     parser.add_argument('-w','--num-workers',type=int,default=1,
                         help='number of Spark workers')
     args = parser.parse_args()
 
-    seed = args.seed
     m = args.num_registers
     if m <= 0 or (m&(m-1)) != 0:
         sys.stderr.write(f'{sys.argv[0]}: m must be a positive power of 2\n')
@@ -108,32 +119,31 @@ if __name__ == '__main__':
     sc = SparkContext(conf=conf)
 
     data = sc.parallelize(get_files(path))
+    words = data.flatMap(lambda x: x.split()).cache()
 
+    rng = np.random.default_rng(seed=1337)
+    seeds = rng.choice(2**32, 1000, replace=False)
+    values = [0] * 1000
 
-    # Implement HyperLogLog here
+    for i, s in enumerate(seeds):
+        estimate = hyperloglog(words, m, s, log2m)
+        values[i] = estimate
 
-    pairs = data.flatMap(lambda x: parse_file(x, seed, log2m)) \
-        .reduceByKey(lambda x,y: max(x,y)) \
-        .cache()
-    
-    num_pairs = pairs.count()
-    num_zeros = m - num_pairs
-    n_hat = alpha(m) * m**2 * (1 / (pairs.map(lambda jr: 2**(-jr[1])).sum() + num_zeros))
+    values = np.array(values)
+    np.save('values.npy', values)
 
-    if (n_hat <= ((5/2) * m)) and (num_zeros > 0):
-        n_hat = m * math.log(m/num_zeros)
-    elif (n_hat > ((1/30) * 2**32)):
-        n_hat = -2**32 * math.log(1-(n_hat / 2**32))
+    mean = np.mean(values)
+    std = np.std(values)
 
-    E = n_hat # replace with your own 
-    
-    end = time.time()
+    print(f"The arithmetic mean of the hash values is: {mean}")
+    print(f"The standard deviation of the hash values is: {std}")
+    print("-"*20)
 
-    print(f'Cardinality estimate: {E}')
-    print(f'Number of workers: {num_workers}')
-    print(f'Took {end-start} s')
+    n = 284689
 
-    
-    
+    for k in range(1,4):
+        low = n*(1-k*(1.04/math.sqrt(m)))
+        high = n*(1+k*(1.04/math.sqrt(m)))
 
-    
+        num_inliers = values[(values >= low) & (values <= high)].size
+        print(f"Ratio for k={k} is: {(num_inliers/1000):.6f}")

@@ -3,6 +3,7 @@
 import argparse
 import sys
 import os
+import csv
 from pyspark import SparkContext, SparkConf
 import math
 import string
@@ -66,7 +67,6 @@ def alpha(m):
         
 # Lazy 
 def parse_file(file, seed, log2m):
-    # return (compute_jr(w.strip(string.punctuation), seed, log2m) for w in file.split() if w.strip(string.punctuation))
     return (compute_jr(w, seed, log2m) for w in file.split())
 
 if __name__ == '__main__':
@@ -80,6 +80,8 @@ if __name__ == '__main__':
                             help=('number of registers (must be a power of two)'))
     parser.add_argument('-w','--num-workers',type=int,default=1,
                         help='number of Spark workers')
+    parser.add_argument('--csv-out', default='results.csv',
+        help='Path to CSV file to append results to (default: results.csv)')
     args = parser.parse_args()
 
     seed = args.seed
@@ -103,7 +105,7 @@ if __name__ == '__main__':
     start = time.time()
     conf = SparkConf()
     conf.setMaster(f'local[{num_workers}]')
-    conf.set('spark.driver.memory', '128g')
+    conf.set('spark.driver.memory', '16g')
     conf.set("spark.ui.showConsoleProgress", "false")
     sc = SparkContext(conf=conf)
 
@@ -132,8 +134,15 @@ if __name__ == '__main__':
     print(f'Cardinality estimate: {E}')
     print(f'Number of workers: {num_workers}')
     print(f'Took {end-start} s')
+    total_time = end-start
 
-    
-    
-
-    
+    # Write (or append) to CSV
+    write_header = not os.path.exists(args.csv_out) or os.path.getsize(args.csv_out) == 0
+    with open(args.csv_out, 'a', newline='') as f:
+        writer = csv.writer(f)
+        if write_header:
+            writer.writerow(['num_workers', 'total_time'])
+        writer.writerow([
+            args.num_workers,
+            round(total_time, 6),
+        ])

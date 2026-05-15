@@ -19,7 +19,7 @@ def murmur3_32(key, seed):
 
     num_blocks = length >> 2
     for i in range(num_blocks):
-        k = struct.unpack_from("<I", key, i*4)[0]
+        k = struct.unpack_from("<I", key_bytes, i*4)[0]
 
         # Scramble
         k = (k * C1) & 0xFFFFFFFF
@@ -31,7 +31,21 @@ def murmur3_32(key, seed):
         h = rol32(h, 13);
         h = (h * 5 + 0xe6546b64) & 0xFFFFFFFF;
 
-    # TODO Add tail calculation
+    # Tail calculation
+    tail_offset = num_blocks * 4
+    tail = key_bytes[tail_offset:]
+    k = 0
+    tail_len = length & 3  # length % 4
+    if tail_len >= 3:
+        k ^= tail[2] << 16
+    if tail_len >= 2:
+        k ^= tail[1] << 8
+    if tail_len >= 1:
+        k ^= tail[0]
+        k  = (k * C1) & 0xFFFFFFFF
+        k  = rol32(k, 15)
+        k  = (k * C2) & 0xFFFFFFFF
+        h ^= k
 
     # Finalization
     h ^= length

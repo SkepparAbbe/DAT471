@@ -2,11 +2,11 @@
 
 import argparse
 import sys
+from assignment5_problem1_skeleton import murmur3_32 as mm32
 
 def murmur3_32(key, seed):
     """Computes the 32-bit murmur3 hash"""
-    # use the implementation from Problem 1
-    raise NotImplementedError()
+    return mm32(key,seed)
 
 def auto_int(x):
     """Auxiliary function to help convert e.g. hex integers"""
@@ -19,7 +19,16 @@ def dlog2(n):
 def rho(n):
     """Given a 32-bit number n, return the 1-based position of the first
     1-bit"""
-    raise NotImplementedError()
+    # Compute x & -x (
+    #  11001110 &
+    #  00110010 
+    # =00000010
+    #  )
+    if n == 0:
+        return 0
+    lsb = 32 - n.bit_length() + 1
+    return lsb
+    
 
 def compute_jr(key,seed,log2m):
     """hash the string key with murmur3_32, using the given seed
