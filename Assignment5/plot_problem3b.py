@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 if __name__ == "__main__":
-    df = pd.read_csv('results_problem2b_20260510_161620.csv')
+    df = pd.read_csv('results_problem3b_20260517_100507.csv')
     baseline = df.loc[df['num_workers'] == 1, 'total_time'].values[0]
     df['speedup'] = baseline / df['total_time']
 

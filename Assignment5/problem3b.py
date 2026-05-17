@@ -114,13 +114,29 @@ if __name__ == '__main__':
 
     # Implement HyperLogLog here
 
-    pairs = data.flatMap(lambda x: parse_file(x, seed, log2m)) \
-        .reduceByKey(lambda x,y: max(x,y)) \
-        .cache()
+    # pairs = data.flatMap(lambda x: parse_file(x, seed, log2m)) \
+    #     .reduceByKey(lambda x,y: max(x,y)) \
+    #     .cache()
     
-    num_pairs = pairs.count()
+    # num_pairs = pairs.count()
+    # num_zeros = m - num_pairs
+    # n_hat = alpha(m) * m**2 * (1 / (pairs.map(lambda jr: 2**(-jr[1])).sum() + num_zeros))
+
+    # if (n_hat <= ((5/2) * m)) and (num_zeros > 0):
+    #     n_hat = m * math.log(m/num_zeros)
+    # elif (n_hat > ((1/30) * 2**32)):
+    #     n_hat = -2**32 * math.log(1-(n_hat / 2**32))
+
+    # E = n_hat # replace with your own 
+
+    num_pairs, harmonic_sum = data \
+        .flatMap(lambda x: parse_file(x, seed, log2m)) \
+        .reduceByKey(max) \
+        .map(lambda jr: (1, 2**(-jr[1]))) \
+        .reduce(lambda a, b: (a[0]+b[0], a[1]+b[1]))
+    
     num_zeros = m - num_pairs
-    n_hat = alpha(m) * m**2 * (1 / (pairs.map(lambda jr: 2**(-jr[1])).sum() + num_zeros))
+    n_hat = alpha(m) * m**2 * (1 / (harmonic_sum + num_zeros))
 
     if (n_hat <= ((5/2) * m)) and (num_zeros > 0):
         n_hat = m * math.log(m/num_zeros)

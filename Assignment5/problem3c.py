@@ -65,23 +65,6 @@ def alpha(m):
     else:
         return (0.7213/(1+1.079/m))
         
-def hyperloglog(words, m, seed, log2m):
-    num_pairs, harmonic_sum = words \
-        .map(lambda w: compute_jr(w, seed, log2m)) \
-        .reduceByKey(max) \
-        .map(lambda jr: (1, 2**(-jr[1]))) \
-        .reduce(lambda a, b: (a[0]+b[0], a[1]+b[1]))
-    
-    num_zeros = m - num_pairs
-    n_hat = alpha(m) * m**2 * (1 / (harmonic_sum + num_zeros))
-
-    if (n_hat <= ((5/2) * m)) and (num_zeros > 0):
-        n_hat = m * math.log(m/num_zeros)
-    elif (n_hat > ((1/30) * 2**32)):
-        n_hat = -2**32 * math.log(1-(n_hat / 2**32))
-
-    return n_hat
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Using HyperLogLog, computes the approximate number of '
@@ -125,18 +108,49 @@ if __name__ == '__main__':
     seeds = rng.choice(2**32, 1000, replace=False)
     values = [0] * 1000
 
-    for i, s in enumerate(seeds):
-        estimate = hyperloglog(words, m, s, log2m)
-        values[i] = estimate
+    seeds_broadcast = sc.broadcast(seeds.tolist())
 
-    values = np.array(values)
+    def compute_all_estimates(word):
+        results = []
+        for i, s in enumerate(seeds_broadcast.value):
+            j, r = compute_jr(word, int(s), log2m)
+            results.append(((i, j), r))
+        return results
+
+    per_register_max = (
+        words
+        .flatMap(compute_all_estimates)
+        .reduceByKey(max)  # key is (seed_idx, j), keeps max r per register
+        .cache()
+    )
+
+    def estimate_for_seed(i):
+        # Filter to registers for this seed, compute harmonic sum
+        num_pairs, harmonic_sum = per_register_max \
+            .filter(lambda x: x[0][0] == i) \
+            .map(lambda x: (1, 2**(-x[1]))) \
+            .reduce(lambda a, b: (a[0]+b[0], a[1]+b[1]))
+
+        num_zeros = m - num_pairs
+
+        n_hat = alpha(m) * m**2 * (1 / (harmonic_sum + num_zeros))
+
+        if (n_hat <= ((5/2) * m)) and (num_zeros > 0):
+            n_hat = m * math.log(m / num_zeros)
+        elif (n_hat > ((1/30) * 2**32)):
+            n_hat = -2**32 * math.log(1 - (n_hat / 2**32))
+
+        return n_hat
+
+    values = np.array([estimate_for_seed(i) for i in range(1000)])
+
     np.save('values.npy', values)
 
     mean = np.mean(values)
     std = np.std(values)
 
-    print(f"The arithmetic mean of the hash values is: {mean}")
-    print(f"The standard deviation of the hash values is: {std}")
+    print(f"The arithmetic mean of the cardinality estimate is: {mean}")
+    print(f"The standard deviation of the cardinality estimate is: {std}")
     print("-"*20)
 
     n = 284689
