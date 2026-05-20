@@ -28,7 +28,9 @@ def normalize(X):
     
     Implement this function using array operations! No loops allowed.
     """
-    raise NotImplementedError()
+    lengths = np.linalg.norm(X, axis=1, keepdims=True)
+    lengths[lengths == 0] = 1
+    return X / lengths
 
 def construct_queries(queries_fn, word_to_idx, X):
     """
@@ -58,19 +60,23 @@ if __name__ == '__main__':
     (Q,queries) = construct_queries(args.queries, word_to_idx, X)
 
     t1 = time.time()
-
-    raise NotImplementedError()
+    # Compute matrix multiplication
     
+    dot_products = Q @ X.T # (10, n)
+
     t2 = time.time()
 
-    raise NotImplementedError()
+    #idxs = np.tile(np.arange(dot_products.shape[1]), dot_products.shape)
+    I = np.argsort(dot_products, axis=1)
 
+    # Sort the results
     # Compute here I such that I[i,:] contains the indices of the nearest
     # neighbors of the word i in ascending order.
     # Naturally, I[i,-1] should then be the index of the word itself.
-
-    t3 = time.time()
     
+    t3 = time.time()
+    # Print the sorted results
+     
     for i in range(I.shape[0]):
         neighbors = [idx_to_word[i] for i in I[i,-2:-5:-1]]
         print(f'{queries[i]}: {" ".join(neighbors)}')

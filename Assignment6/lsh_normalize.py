@@ -28,8 +28,9 @@ def normalize(X):
     
     Implement this function using array operations! No loops allowed.
     """
-    raise NotImplementedError()
-    
+    lengths = np.linalg.norm(X, axis=1, keepdims=True)
+    lengths[lengths == 0] = 1
+    return X / lengths
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
