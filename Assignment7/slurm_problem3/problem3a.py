@@ -27,13 +27,6 @@ def linear_scan(X, Q, b = None):
         dist = Q_norm + X_norm - 2 * Q_batch @ X.T                   # (b, n)
         I[i:i+b] = np.argmin(dist, axis=1)
 
-    r = m % b
-    if r != 0:
-        Q_batch = Q[-r:, :]                                          # (r, d)
-        Q_norm = np.sum(Q_batch**2, axis=1, keepdims=True)           # (r, 1)
-        dist = Q_norm + X_norm - 2 * Q_batch @ X.T                   # (r, n)
-        I[-r:] = np.argmin(dist, axis=1)
-
     return I
         
 
