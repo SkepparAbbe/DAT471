@@ -39,19 +39,21 @@ def linear_scan(X, Q, b = None):
     m = Q.shape[0]
     I = cp.zeros(m,dtype=cp.int64)
     
+    # Precompute X norms once, reused every batch
+    X_norm = cp.sum(X**2, axis=1, keepdims=True).T  # (1, n)
+    
     for i in range(0, m, b):
-        Q_batch = Q[i:i+b, :] # (b, d)
-        D_batch = Q_batch[:, cp.newaxis, :] - X[cp.newaxis, :, :] # (b, 1, d) - (1, n, d) -> (b, n, d) - (b, n, d)
-        dist = cp.linalg.norm(D_batch, axis=2) # (b, n)
-        I[i:i+b] = cp.argsort(dist, axis=1)[:,0] # (b, 1)
+        Q_batch = Q[i:i+b, :]                                        # (b, d)
+        Q_norm = cp.sum(Q_batch**2, axis=1, keepdims=True)           # (b, 1)
+        dist = Q_norm + X_norm - 2 * Q_batch @ X.T                   # (b, n)
+        I[i:i+b] = cp.argmin(dist, axis=1)
 
-    # For the last elements
     r = m % b
     if r != 0:
-        Q_batch = Q[-r:, :]
-        D_batch = Q_batch[:, cp.newaxis, :] - X[cp.newaxis, :, :]
-        dist = cp.linalg.norm(D_batch, axis=2) # (b, n)
-        I[-r:] = cp.argsort(dist, axis=1)[:,0] # (b, 1)
+        Q_batch = Q[-r:, :]                                          # (r, d)
+        Q_norm = cp.sum(Q_batch**2, axis=1, keepdims=True)           # (r, 1)
+        dist = Q_norm + X_norm - 2 * Q_batch @ X.T                   # (r, n)
+        I[-r:] = cp.argmin(dist, axis=1)
 
     return I
         
@@ -167,8 +169,8 @@ if __name__ == '__main__':
     if QL is not None:
         for (i,j) in enumerate(I):
             if QL[i] != L[j]:
-                sys.stderr.write(f'{i}th query was erroneous: got "{L[j]}", '
-                                     f'but expected "{QL[i]}"\n')
+                # sys.stderr.write(f'{i}th query was erroneous: got "{L[j]}", '
+                #                      f'but expected "{QL[i]}"\n')
                 num_erroneous += 1
 
     print(f'Loading dataset ({n} vectors of length {d}) took', t2-t1)

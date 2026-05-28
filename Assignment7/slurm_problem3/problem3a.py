@@ -1,30 +1,9 @@
 import numpy as np
-import cupy as cp
 import argparse
 import pandas as pd
 import csv
 import sys
 import time
-
-def is_gpu_available():
-    try:
-        cp.cuda.runtime.getDeviceCount()
-        return cp.cuda.runtime.getDeviceCount() > 0
-    except cp.cuda.runtime.CUDARuntimeError:
-        return False
-
-def to_gpu(arr):
-    if isinstance(arr, np.ndarray):
-        gpu_arr = cp.asarray(arr)
-        cp.cuda.Device().synchronize()
-        return gpu_arr
-    return arr  # already on GPU
-
-def to_cpu(arr):
-    if isinstance(arr, cp.ndarray):
-        cp.cuda.Device().synchronize()
-        return cp.asnumpy(arr)
-    return arr  # already on CPU
 
 def linear_scan(X, Q, b = None):
     """
@@ -37,21 +16,23 @@ def linear_scan(X, Q, b = None):
     """
     n = X.shape[0]
     m = Q.shape[0]
-    I = cp.zeros(m,dtype=cp.int64)
+    I = np.zeros(m,dtype=np.int64)
+    
+    # Precompute X norms once, reused every batch
+    X_norm = np.sum(X**2, axis=1, keepdims=True).T  # (1, n)
     
     for i in range(0, m, b):
-        Q_batch = Q[i:i+b, :] # (b, d)
-        D_batch = Q_batch[:, cp.newaxis, :] - X[cp.newaxis, :, :] # (b, 1, d) - (1, n, d) -> (b, n, d) - (b, n, d)
-        dist = cp.linalg.norm(D_batch, axis=2) # (b, n)
-        I[i:i+b] = cp.argsort(dist, axis=1)[:,0] # (b, 1)
+        Q_batch = Q[i:i+b, :]                                        # (b, d)
+        Q_norm = np.sum(Q_batch**2, axis=1, keepdims=True)           # (b, 1)
+        dist = Q_norm + X_norm - 2 * Q_batch @ X.T                   # (b, n)
+        I[i:i+b] = np.argmin(dist, axis=1)
 
-    # For the last elements
     r = m % b
     if r != 0:
-        Q_batch = Q[-r:, :]
-        D_batch = Q_batch[:, cp.newaxis, :] - X[cp.newaxis, :, :]
-        dist = cp.linalg.norm(D_batch, axis=2) # (b, n)
-        I[-r:] = cp.argsort(dist, axis=1)[:,0] # (b, 1)
+        Q_batch = Q[-r:, :]                                          # (r, d)
+        Q_norm = np.sum(Q_batch**2, axis=1, keepdims=True)           # (r, 1)
+        dist = Q_norm + X_norm - 2 * Q_batch @ X.T                   # (r, n)
+        I[-r:] = np.argmin(dist, axis=1)
 
     return I
         
@@ -112,9 +93,6 @@ if __name__ == '__main__':
         help = 'Size of batches')
     args = parser.parse_args()
 
-    on_gpu = is_gpu_available()
-    print(f"GPU available: {on_gpu}")
-
     t1 = time.time()
     if 'pubs' in args.dataset:
         (X,L) = load_pubs(args.dataset)
@@ -147,20 +125,8 @@ if __name__ == '__main__':
         assert len(QL) == m
     t6 = time.time()
 
-    X = to_gpu(X)
-    Q = to_gpu(Q)
-
-    t7 = time.time()
-    
     I = linear_scan(X,Q,args.batch_size)
-    cp.cuda.Stream.null.synchronize() 
-
-    t8 = time.time()
-
-    I = to_cpu(I)
-
-    t9 = time.time()
-
+    t7 = time.time()
     assert I.shape == (m,)
 
     num_erroneous = 0
@@ -172,8 +138,6 @@ if __name__ == '__main__':
                 num_erroneous += 1
 
     print(f'Loading dataset ({n} vectors of length {d}) took', t2-t1)
-    print(f'Transferring data to GPU took', t7-t6)
-    print(f'Transferring data to CPU took', t9-t8)
-    print(f'Performing {m} NN queries took', t8-t7)
+    print(f'Performing {m} NN queries took', t7-t6)
     print(f"Batch size used (b={args.batch_size})")
     print(f'Number of erroneous queries: {num_erroneous}')
