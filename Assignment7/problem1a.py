@@ -19,6 +19,10 @@ def linear_scan(X, Q, b = None):
     I = np.zeros(m,dtype=np.int64)
     
     for i in range(0, m, b):
+        print(i)
+        print(i+b)
+        print(Q[i:i+b, :].shape[1])
+        print()
         Q_batch = Q[i:i+b, :] # (b, d)
         D_batch = Q_batch[:, np.newaxis, :] - X[np.newaxis, :, :] # (b, 1, d) - (1, n, d) -> (b, n, d) - (b, n, d)
         dist = np.linalg.norm(D_batch, axis=2) # (b, n)
@@ -27,6 +31,7 @@ def linear_scan(X, Q, b = None):
     # For the last elements
     r = m % b
     if r != 0:
+        print(f"ran with r={r}")
         Q_batch = Q[-r:, :]
         D_batch = Q_batch[:, np.newaxis, :] - X[np.newaxis, :, :]
         dist = np.linalg.norm(D_batch, axis=2) # (b, n)

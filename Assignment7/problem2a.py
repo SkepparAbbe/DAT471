@@ -44,15 +44,7 @@ def linear_scan(X, Q, b = None):
         D_batch = Q_batch[:, cp.newaxis, :] - X[cp.newaxis, :, :] # (b, 1, d) - (1, n, d) -> (b, n, d) - (b, n, d)
         dist = cp.linalg.norm(D_batch, axis=2) # (b, n)
         I[i:i+b] = cp.argsort(dist, axis=1)[:,0] # (b, 1)
-
-    # For the last elements
-    r = m % b
-    if r != 0:
-        Q_batch = Q[-r:, :]
-        D_batch = Q_batch[:, cp.newaxis, :] - X[cp.newaxis, :, :]
-        dist = cp.linalg.norm(D_batch, axis=2) # (b, n)
-        I[-r:] = cp.argsort(dist, axis=1)[:,0] # (b, 1)
-
+        
     return I
         
 
