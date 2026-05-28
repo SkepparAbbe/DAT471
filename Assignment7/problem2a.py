@@ -44,7 +44,7 @@ def linear_scan(X, Q, b = None):
         D_batch = Q_batch[:, cp.newaxis, :] - X[cp.newaxis, :, :] # (b, 1, d) - (1, n, d) -> (b, n, d) - (b, n, d)
         dist = cp.linalg.norm(D_batch, axis=2) # (b, n)
         I[i:i+b] = cp.argsort(dist, axis=1)[:,0] # (b, 1)
-        
+
     return I
         
 
@@ -139,19 +139,24 @@ if __name__ == '__main__':
         assert len(QL) == m
     t6 = time.time()
 
+    _dummy = cp.zeros(10)
+    cp.cuda.Device().synchronize()
+
+    t7 = time.time()
+
     X = to_gpu(X)
     Q = to_gpu(Q)
 
-    t7 = time.time()
+    t8 = time.time()
     
     I = linear_scan(X,Q,args.batch_size)
     cp.cuda.Stream.null.synchronize() 
 
-    t8 = time.time()
+    t9 = time.time()
 
     I = to_cpu(I)
 
-    t9 = time.time()
+    t10 = time.time()
 
     assert I.shape == (m,)
 
@@ -159,13 +164,13 @@ if __name__ == '__main__':
     if QL is not None:
         for (i,j) in enumerate(I):
             if QL[i] != L[j]:
-                sys.stderr.write(f'{i}th query was erroneous: got "{L[j]}", '
-                                     f'but expected "{QL[i]}"\n')
+                # sys.stderr.write(f'{i}th query was erroneous: got "{L[j]}", '
+                #                      f'but expected "{QL[i]}"\n')
                 num_erroneous += 1
 
     print(f'Loading dataset ({n} vectors of length {d}) took', t2-t1)
-    print(f'Transferring data to GPU took', t7-t6)
-    print(f'Transferring data to CPU took', t9-t8)
-    print(f'Performing {m} NN queries took', t8-t7)
+    print(f'Transferring data to GPU took', t8-t7)
+    print(f'Transferring data to CPU took', t10-t9)
+    print(f'Performing {m} NN queries took', t9-t8)
     print(f"Batch size used (b={args.batch_size})")
     print(f'Number of erroneous queries: {num_erroneous}')

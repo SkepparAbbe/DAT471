@@ -142,19 +142,24 @@ if __name__ == '__main__':
         assert len(QL) == m
     t6 = time.time()
 
+    _dummy = cp.zeros(10)
+    cp.cuda.Device().synchronize()
+
+    t7 = time.time()
+
     X = to_gpu(X)
     Q = to_gpu(Q)
 
-    t7 = time.time()
+    t8 = time.time()
     
     I = linear_scan(X,Q,args.batch_size)
     cp.cuda.Stream.null.synchronize() 
 
-    t8 = time.time()
+    t9 = time.time()
 
     I = to_cpu(I)
 
-    t9 = time.time()
+    t10 = time.time()
 
     assert I.shape == (m,)
 
@@ -167,8 +172,8 @@ if __name__ == '__main__':
                 num_erroneous += 1
 
     print(f'Loading dataset ({n} vectors of length {d}) took', t2-t1)
-    print(f'Transferring data to GPU took', t7-t6)
-    print(f'Transferring data to CPU took', t9-t8)
-    print(f'Performing {m} NN queries took', t8-t7)
+    print(f'Transferring data to GPU took', t8-t7)
+    print(f'Transferring data to CPU took', t10-t9)
+    print(f'Performing {m} NN queries took', t9-t8)
     print(f"Batch size used (b={args.batch_size})")
     print(f'Number of erroneous queries: {num_erroneous}')

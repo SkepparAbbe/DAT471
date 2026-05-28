@@ -3,10 +3,10 @@
 ## SLURM commands 
 
 # Job Info
-#SBATCH --job-name=problem2b_glove_large
+#SBATCH --job-name=problem2b_glove_large_functional
 
 # Output file
-#SBATCH --output=logs/problem2/problem2b_glove_large_%j.log
+#SBATCH --output=logs/problem2/problem2b_glove_large_functional_%j.log
 
 # Time limit to prioritize us more
 #SBATCH --time=30
@@ -21,7 +21,7 @@ DATASET="/mnt/glove.840B.300d.txt"
 QUERY_FILE="/mnt/glove.840B.300d_queries_"
 
 # Define the batch sizes you want to test
-BATCH_SIZES=(16 32 64 128 256 512)
+BATCH_SIZES=(1 2 5)
 QUERY_SIZES=("tiny" "small" "medium" "big")
 
 for BATCH in "${BATCH_SIZES[@]}"; do

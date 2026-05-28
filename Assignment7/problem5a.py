@@ -118,25 +118,30 @@ if __name__ == '__main__':
         assert len(QL) == m
     t6 = time.time()
 
+    _dummy = cp.zeros(10)
+    cp.cuda.Device().synchronize()
+
+    t7 = time.time()
+
     X = to_gpu(X)
     Q = to_gpu(Q)
 
-    t7 = time.time()
+    t8 = time.time()
     
     # Build index on the corpus
     index = brute_force.build(X)
 
-    t8 = time.time()
+    t9 = time.time()
 
     # Search for nearest neighbors of your queries
     _, neighbors = brute_force.search(index, Q, k=1)
     cp.cuda.Stream.null.synchronize() 
 
-    t9 = time.time()
+    t10 = time.time()
 
     I = to_cpu(cp.asarray(neighbors))
 
-    t10 = time.time()
+    t11 = time.time()
 
     I = I.flatten()
 
@@ -151,9 +156,9 @@ if __name__ == '__main__':
                 num_erroneous += 1
 
     print(f'Loading dataset ({n} vectors of length {d}) took', t2-t1)
-    print(f'Transferring data to GPU took', t7-t6)
-    print(f'Transferring data to CPU took', t10-t9)
-    print(f'Building index took', t8-t7)
-    print(f'Performing {m} NN queries took', t9-t8)
+    print(f'Transferring data to GPU took', t8-t7)
+    print(f'Transferring data to CPU took', t11-t10)
+    print(f'Building index took', t9-t8)
+    print(f'Performing {m} NN queries took', t10-t9)
     print(f"Batch size used (b={args.batch_size})")
     print(f'Number of erroneous queries: {num_erroneous}')
