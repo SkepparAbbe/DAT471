@@ -2,14 +2,14 @@
 
 BATCH_SIZES=(0 16 32 64 128 256 512)
 QUERY_SIZES=("tiny" "small" "medium" "big")
-
+DATASET=$"pubs"
 mkdir -p logs
 
 for BATCH in "${BATCH_SIZES[@]}"; do
     for QUERY in "${QUERY_SIZES[@]}"; do
         
-        LOG_FILE="logs/glove_b${BATCH}_${QUERY}_%j.log"
-        JOB_NAME="glove_${BATCH}_${QUERY}"
+        LOG_FILE="logs/${DATASET}_b${BATCH}_${QUERY}_%j.log"
+        JOB_NAME="${DATASET}_pubs_${BATCH}_${QUERY}"
         
         echo "Submitting: $JOB_NAME -> $LOG_FILE"
         

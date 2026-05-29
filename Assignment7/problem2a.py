@@ -22,7 +22,6 @@ def to_gpu(arr):
 
 def to_cpu(arr):
     if isinstance(arr, cp.ndarray):
-        cp.cuda.Device().synchronize()
         return cp.asnumpy(arr)
     return arr  # already on CPU
 
@@ -43,7 +42,7 @@ def linear_scan(X, Q, b = None):
         Q_batch = Q[i:i+b, :] # (b, d)
         D_batch = Q_batch[:, cp.newaxis, :] - X[cp.newaxis, :, :] # (b, 1, d) - (1, n, d) -> (b, n, d) - (b, n, d)
         dist = cp.linalg.norm(D_batch, axis=2) # (b, n)
-        I[i:i+b] = cp.argsort(dist, axis=1)[:,0] # (b, 1)
+        I[i:i+b] = cp.argmin(dist, axis=1) # (b, 1)
 
     return I
         

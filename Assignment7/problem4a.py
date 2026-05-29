@@ -22,7 +22,6 @@ def to_gpu(arr):
 
 def to_cpu(arr):
     if isinstance(arr, cp.ndarray):
-        cp.cuda.Device().synchronize()
         return cp.asnumpy(arr)
     return arr  # already on CPU
 

@@ -10,7 +10,10 @@ if [[ -z "$LOG_FILE" || ! -f "$LOG_FILE" ]]; then
     exit 1
 fi
 
-CSV_FILE="${LOG_FILE%.log}_results.csv"  # strips .log, appends _results.csv
+# Strip .log, remove trailing SLURM job number (_digits), append _results.csv
+CSV_FILE="${LOG_FILE%.log}"
+CSV_FILE=$(echo "$CSV_FILE" | sed 's/_[0-9]\{6,\}$//')
+CSV_FILE="${CSV_FILE}_results.csv"
 
 # Write CSV header
 echo "dataset,query_size,batch_size,num_queries,total_time_s,per_query_time_s,host_to_gpu_s,device_to_cpu_s,errors" > "$CSV_FILE"
@@ -58,6 +61,7 @@ flush_row() {
 
     ds_short=$(basename "$dataset")
 
+    # fmt6: convert any float (including scientific notation) to fixed 6dp via awk
     fmt6() { [[ "$1" == "N/A" || -z "$1" ]] && echo "N/A" || awk "BEGIN{printf \"%.6f\",$1}"; }
     tt=$(fmt6 "$total_time"); tg=$(fmt6 "$to_gpu"); tc=$(fmt6 "$to_cpu")
 
@@ -90,6 +94,9 @@ flush_row() {
     n_queries=""; total_time=""; to_gpu=""; to_cpu=""; errors=""
 }
 
+# Regex for a float that may be in scientific notation e.g. 1.23e-05 or 2.45
+FLOAT='([0-9]+\.?[0-9]*([eE][+-]?[0-9]+)?)'
+
 while IFS= read -r line; do
     if [[ "$line" =~ ^Starting\ run\ with\ Batch\ Size:\ ([0-9]+)\ On\ Dataset:\ (.+)\ With\ query\ size:\ (.+)$ ]]; then
         flush_row
@@ -97,14 +104,14 @@ while IFS= read -r line; do
         dataset="${BASH_REMATCH[2]}"
         query_size="${BASH_REMATCH[3]}"
 
-    elif [[ "$line" =~ Performing\ ([0-9]+)\ NN\ queries\ took\ ([0-9.]+) ]]; then
+    elif [[ "$line" =~ Performing\ ([0-9]+)\ NN\ queries\ took\ ([0-9]+\.?[0-9]*([eE][+-]?[0-9]+)?) ]]; then
         n_queries="${BASH_REMATCH[1]}"
         total_time="${BASH_REMATCH[2]}"
 
-    elif [[ "$line" =~ Transferring\ data\ to\ GPU\ took\ ([0-9.]+) ]]; then
+    elif [[ "$line" =~ Transferring\ data\ to\ GPU\ took\ ([0-9]+\.?[0-9]*([eE][+-]?[0-9]+)?) ]]; then
         to_gpu="${BASH_REMATCH[1]}"
 
-    elif [[ "$line" =~ Transferring\ data\ to\ CPU\ took\ ([0-9.]+) ]]; then
+    elif [[ "$line" =~ Transferring\ data\ to\ CPU\ took\ ([0-9]+\.?[0-9]*([eE][+-]?[0-9]+)?) ]]; then
         to_cpu="${BASH_REMATCH[1]}"
 
     elif [[ "$line" =~ Number\ of\ erroneous\ queries:\ ([0-9]+) ]]; then
